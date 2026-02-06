@@ -1,0 +1,42 @@
+{
+  "f1772c38": {
+    "id": "f1772c38",
+    "name": "modelo-z1",
+    "description": "descrição",
+    "filename": "modelo.docx",
+    "file_path": "C:\\Users\\Herick2D\\Documents\\Projetos\\contract-api\\storage\\templates\\f1772c38_modelo-z1.docx",
+    "status": "active",
+    "placeholders": [
+      "(art. 323 do CPC c/c 62, II, a da Lei 8245/91)",
+      "(inserir o endereço completo do imóvel locado objeto do contrato: Rua/Avenida, número, complemento, Cidade, UF e CEP)",
+      "(inserir o nome do advogado responsável do escritório)",
+      "(aquelas parcelas que vencerão posteriormente à prolação da competente sentença arbitral e podem ser cobradas enquanto o Inquilino estiver morando no imóvel locado sem realizar o devido pagamento)",
+      "(inserir quadro demonstrativo do débito)",
+      "(escrever o valor por extenso)",
+      "(inserir o endereço eletrônico do Inquilino)",
+      "(número do whatsapp do Inquilino)",
+      "(inserir o CPF do locador)",
+      "(incluir endereço completo do locador: Rua/Avenida, número, complemento, Cidade, UF e CEP)",
+      "(Lei nº 9.307/96)",
+      "(com acréscimo das multas, juros, correção monetária)",
+      "(NOME DO INQUILINO)",
+      "(transcrever ou printar a cláusula do contrato relativa ao pagamento)",
+      "(inserir o e-mail)",
+      "XXXXXX",
+      "(inserir o CPF do Inqulino)",
+      "(trinta)",
+      "(inserir o e-mail oficial do escritório para recebimento de intimações)",
+      "(inserir o endereço comercial do escritório)",
+      "(quinze)",
+      "(na Lei de Arbitragem e no Código de Processo Civil)",
+      "(cuja convenção as partes se submeteram voluntariamente)",
+      "(inserir o endereço eletrônico do Inquiino)",
+      "(inserir o valor por extenso)",
+      "(inserir o endereço completo dos Inquilinos)",
+      "(nacionalidade)",
+      "(TJSP Apelação nº 1001046-48.2022.8.26.0515, 35ª Câmara de Direito Privado, Desembargador Relator Gilson Delgado Miranda, data do julgado 02/10/2023, data da publicação 02/10/2023)"
+    ],
+    "created_at": "2026-02-04T18:11:49.622491",
+    "updated_at": "2026-02-04T18:11:49.622500"
+  }
+}
