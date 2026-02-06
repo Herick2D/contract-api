@@ -1,4 +1,4 @@
-
+import os
 from pathlib import Path
 from pydantic_settings import BaseSettings
 from functools import lru_cache
@@ -24,23 +24,14 @@ class Settings(BaseSettings):
     escritorio_whatsapp: str = "(21) 96975-0156"
     escritorio_email: str = "quintoandar@gondimadv.com.br"
     escritorio_email_intimacoes: str = "camaras.arbitrais@gondimadv.com.br"
-    escritorio_endereco: str = (
-        "Avenida Paulo de Frontin, 1, Centro Empresarial, Cidade Nova, Rio de Janeiro - RJ, 20260-010"
-    )
+    escritorio_endereco: str = "Avenida Paulo de Frontin, 1, Centro Empresarial, Cidade Nova, Rio de Janeiro - RJ, 20260-010"
     nacionalidade_padrao: str = "brasileiro(a)"
-
+    
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
     def setup_directories(self):
-        for dir_path in [
-            self.storage_dir,
-            self.templates_dir,
-            self.temp_dir,
-            self.outputs_dir,
-            self.prints_dir,
-        ]:
-
+        for dir_path in [self.storage_dir, self.templates_dir, self.temp_dir, self.outputs_dir, self.prints_dir]:
             dir_path.mkdir(parents=True, exist_ok=True)
 
 

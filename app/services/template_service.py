@@ -1,61 +1,74 @@
-
+"""
+Serviço de Gerenciamento de Templates
+"""
+import os
 import re
 import json
 import uuid
-
+import shutil
 from pathlib import Path
 from datetime import datetime
 from typing import List, Optional, Dict, Any
+
 from docx import Document
 
 from ..config import get_settings
 
 
 class TemplateService:
+    """Serviço para gerenciar templates Word"""
+    
     def __init__(self):
         self.settings = get_settings()
         self.templates_dir = self.settings.templates_dir
         self.metadata_file = self.templates_dir / "templates_metadata.json"
         self._ensure_metadata_file()
-
+    
     def _ensure_metadata_file(self):
+        """Garante que o arquivo de metadados existe"""
         if not self.metadata_file.exists():
             self._save_metadata({})
-
+    
     def _load_metadata(self) -> Dict[str, Any]:
+        """Carrega metadados dos templates"""
         try:
-            with open(self.metadata_file, "r", encoding="utf-8") as f:
+            with open(self.metadata_file, 'r', encoding='utf-8') as f:
                 return json.load(f)
-
         except:
             return {}
-
+    
     def _save_metadata(self, metadata: Dict[str, Any]):
-        with open(self.metadata_file, "w", encoding="utf-8") as f:
+        """Salva metadados dos templates"""
+        with open(self.metadata_file, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=2, ensure_ascii=False, default=str)
-
+    
     def _extract_placeholders(self, file_path: Path) -> List[str]:
+        """Extrai placeholders do documento Word"""
         placeholders = set()
-
+        
         try:
             doc = Document(file_path)
+            
             def find_placeholders(text: str):
+                # Padrões comuns de placeholder
                 patterns = [
-                    r"\([^)]{5,}\)",
-                    r"XXXXX+",
-                    r"\{[^}]+\}",
+                    r'\([^)]{5,}\)',  # Texto entre parênteses (min 5 chars)
+                    r'XXXXX+',        # Sequências de X
+                    r'\{[^}]+\}',     # Texto entre chaves
                 ]
-
                 found = []
                 for pattern in patterns:
                     matches = re.findall(pattern, text)
                     found.extend(matches)
                 return found
-
+            
+            # Parágrafos
             for para in doc.paragraphs:
                 if para.text.strip():
                     phs = find_placeholders(para.text)
                     placeholders.update(phs)
+            
+            # Tabelas
             for table in doc.tables:
                 for row in table.rows:
                     for cell in row.cells:
@@ -63,8 +76,9 @@ class TemplateService:
                             if para.text.strip():
                                 phs = find_placeholders(para.text)
                                 placeholders.update(phs)
+            
+            # Headers e Footers
             for section in doc.sections:
-
                 if section.header:
                     for para in section.header.paragraphs:
                         phs = find_placeholders(para.text)
@@ -73,29 +87,47 @@ class TemplateService:
                     for para in section.footer.paragraphs:
                         phs = find_placeholders(para.text)
                         placeholders.update(phs)
-
+        
         except Exception as e:
-
             print(f"Erro ao extrair placeholders: {e}")
-
-        return list(placeholders)[:50]
-
+        
+        return list(placeholders)[:50]  # Limita a 50 placeholders
+    
     async def create_template(
         self,
         name: str,
         file_content: bytes,
         original_filename: str,
-        description: Optional[str] = None,
+        description: Optional[str] = None
     ) -> Dict[str, Any]:
-
+        """
+        Cria um novo template
+        
+        Args:
+            name: Nome identificador do template
+            file_content: Conteúdo do arquivo
+            original_filename: Nome original do arquivo
+            description: Descrição opcional
+            
+        Returns:
+            Dados do template criado
+        """
+        # Gera ID único
         template_id = str(uuid.uuid4())[:8]
+        
+        # Define caminho do arquivo
         file_ext = Path(original_filename).suffix
         new_filename = f"{template_id}_{name.replace(' ', '_')}{file_ext}"
         file_path = self.templates_dir / new_filename
-        with open(file_path, "wb") as f:
+        
+        # Salva arquivo
+        with open(file_path, 'wb') as f:
             f.write(file_content)
+        
+        # Extrai placeholders
         placeholders = self._extract_placeholders(file_path)
-
+        
+        # Cria metadados
         template_data = {
             "id": template_id,
             "name": name,
@@ -105,86 +137,101 @@ class TemplateService:
             "status": "active",
             "placeholders": placeholders,
             "created_at": datetime.now().isoformat(),
-            "updated_at": datetime.now().isoformat(),
+            "updated_at": datetime.now().isoformat()
         }
-
+        
+        # Salva nos metadados
         metadata = self._load_metadata()
         metadata[template_id] = template_data
         self._save_metadata(metadata)
+        
         return template_data
-
+    
     async def get_template(self, template_id: str) -> Optional[Dict[str, Any]]:
+        """Obtém um template pelo ID"""
         metadata = self._load_metadata()
         return metadata.get(template_id)
-
-    async def list_templates(
-        self, status: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
-
+    
+    async def list_templates(self, status: Optional[str] = None) -> List[Dict[str, Any]]:
+        """Lista todos os templates"""
         metadata = self._load_metadata()
         templates = list(metadata.values())
+        
         if status:
             templates = [t for t in templates if t.get("status") == status]
-
+        
         return sorted(templates, key=lambda x: x.get("created_at", ""), reverse=True)
-
+    
     async def update_template(
         self,
         template_id: str,
         name: Optional[str] = None,
         description: Optional[str] = None,
-        status: Optional[str] = None,
+        status: Optional[str] = None
     ) -> Optional[Dict[str, Any]]:
-
+        """Atualiza um template"""
         metadata = self._load_metadata()
-
+        
         if template_id not in metadata:
             return None
-
+        
         template = metadata[template_id]
+        
         if name is not None:
             template["name"] = name
-
         if description is not None:
             template["description"] = description
-
         if status is not None:
             template["status"] = status
-
+        
         template["updated_at"] = datetime.now().isoformat()
+        
         metadata[template_id] = template
         self._save_metadata(metadata)
-
+        
         return template
-
+    
     async def delete_template(self, template_id: str) -> bool:
+        """Deleta um template"""
         metadata = self._load_metadata()
+        
         if template_id not in metadata:
             return False
-
+        
         template = metadata[template_id]
+        
+        # Remove arquivo
         file_path = Path(template["file_path"])
         if file_path.exists():
             file_path.unlink()
+        
+        # Remove dos metadados
         del metadata[template_id]
         self._save_metadata(metadata)
+        
         return True
-
+    
     def get_template_path(self, template_id: str) -> Optional[Path]:
+        """Retorna o caminho do arquivo do template"""
         metadata = self._load_metadata()
+        
         if template_id not in metadata:
             return None
-
+        
         file_path = Path(metadata[template_id]["file_path"])
+        
         if not file_path.exists():
             return None
-
+        
         return file_path
 
+
+# Singleton
 _template_service: Optional[TemplateService] = None
 
 
 def get_template_service() -> TemplateService:
+    """Retorna a instância do serviço de templates"""
     global _template_service
     if _template_service is None:
         _template_service = TemplateService()

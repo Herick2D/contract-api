@@ -1,5 +1,4 @@
 import json
-
 from pathlib import Path
 from typing import Dict, Any
 
@@ -17,16 +16,17 @@ DEFAULT_CONFIG = {
 CONFIG_FILE = "config.json"
 
 def load_config(config_path: str = None) -> Dict[str, Any]:
+
     if config_path is None:
         config_path = CONFIG_FILE
 
     config_file = Path(config_path)
+
     if config_file.exists():
         try:
-            with open(config_file, "r", encoding="utf-8") as f:
+            with open(config_file, 'r', encoding='utf-8') as f:
                 config = json.load(f)
                 return {**DEFAULT_CONFIG, **config}
-
         except Exception as e:
             print(f"Aviso: Erro ao carregar config.json: {e}. Usando padrões.")
             return DEFAULT_CONFIG.copy()
@@ -35,15 +35,15 @@ def load_config(config_path: str = None) -> Dict[str, Any]:
 
 
 def save_config(config: Dict[str, Any], config_path: str = None) -> bool:
+
     if config_path is None:
         config_path = CONFIG_FILE
 
     try:
         config_file = Path(config_path)
-        with open(config_file, "w", encoding="utf-8") as f:
+        with open(config_file, 'w', encoding='utf-8') as f:
             json.dump(config, f, indent=4, ensure_ascii=False)
         return True
-
     except Exception as e:
         print(f"Erro ao salvar config.json: {e}")
         return False

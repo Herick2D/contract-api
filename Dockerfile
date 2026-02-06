@@ -1,6 +1,5 @@
 FROM python:3.11-slim
 
-# Metadados
 LABEL maintainer="Contract Generator Team"
 LABEL version="1.0.0"
 LABEL description="API de geração de contratos a partir de templates Word e dados Excel"
