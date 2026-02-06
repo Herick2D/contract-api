@@ -1,0 +1,74 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*,cover
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# Mac
+.DS_Store
+
+# Logs
+*.log
+uvicorn_*.log
+
+# Storage runtime directories (keep templates and metadata checked in)
+storage/outputs/
+storage/temp/
+storage/prints/
+
+# OS files
+Thumbs.db
+
+# Secrets
+.env
+
+# Ignore local generated zip files
+*.zip
+
+# Keep templates and templates_metadata.json under storage/templates/
+!storage/templates/
+!storage/templates/*.docx
+!storage/templates/templates_metadata.json
