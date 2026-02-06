@@ -51,7 +51,6 @@ class DocumentGenerator:
             return False
 
     def _substituir_texto(self, doc: Document, substituicoes: Dict[str, str]) -> int:
-
         total = 0
 
         for para in doc.paragraphs:
@@ -99,9 +98,11 @@ class DocumentGenerator:
                 if antigo in run.text:
                     run.text = run.text.replace(antigo, novo)
         
+        self._limpar_fundo_paragrafo(para)
+        
         if para.text == texto_esperado:
             return total
-        
+
         if para.runs:
             formato = None
             for run in para.runs:
@@ -126,8 +127,40 @@ class DocumentGenerator:
                     run.italic = formato['italic']
                 if formato['underline'] is not None:
                     run.underline = formato['underline']
+            
+            self._limpar_fundo_paragrafo(para)
         
         return total
+
+    def _limpar_fundo_run(self, run):
+        try:
+            run.font.highlight_color = None
+            
+            from docx.oxml.ns import qn
+            rPr = run._element.get_or_add_rPr()
+            
+            shd = rPr.find(qn('w:shd'))
+            if shd is not None:
+                rPr.remove(shd)
+                
+        except Exception:
+            pass
+
+    def _limpar_fundo_paragrafo(self, para):
+
+        try:
+            from docx.oxml.ns import qn
+            
+            pPr = para._element.get_or_add_pPr()
+            shd = pPr.find(qn('w:shd'))
+            if shd is not None:
+                pPr.remove(shd)
+            
+            for run in para.runs:
+                self._limpar_fundo_run(run)
+                
+        except Exception:
+            pass
 
     def gerar(self, contrato: Contrato, output_path: str) -> Tuple[bool, str]:
 
