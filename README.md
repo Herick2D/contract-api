@@ -314,16 +314,6 @@ Em produção, recomenda-se:
 4. **HTTPS**: Usar certificado SSL
 5. **Logs**: Configurar logging adequado
 
-## 🧪 Testes
-
-```bash
-# Instala dependências de teste
-pip install pytest pytest-asyncio httpx
-
-# Executa testes
-pytest tests/ -v
-```
-
 ## 📈 Monitoramento
 
 Endpoints úteis:
@@ -331,18 +321,3 @@ Endpoints úteis:
 - `/docs` - Documentação interativa
 - `/redoc` - Documentação alternativa
 
-## 🤝 Contribuindo
-
-1. Fork o projeto
-2. Crie uma branch (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
-
-## 📝 Licença
-
-Projeto proprietário.
-
----
-
-**Desenvolvido com ❤️ usando FastAPI + Python**
