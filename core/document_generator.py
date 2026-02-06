@@ -71,32 +71,20 @@ class DocumentGenerator:
     def _substituir_em_paragrafo(self, para, substituicoes: Dict[str, str]) -> int:
         total = 0
         texto_completo = para.text
-        for antigo, novo in substituicoes.items():
-            if antigo in texto_completo:
-                substituiu_em_run = False
-                for run in para.runs:
-                    if antigo in run.text:
-                        run.text = run.text.replace(antigo, novo)
-                        substituiu_em_run = True
-                        total += 1
-                if not substituiu_em_run and antigo in para.text:
-                    formato = None
-                    for run in para.runs:
-                        if run.text.strip():
-                            formato = {
-                                "bold": run.bold,
-                                "italic": run.italic,
-                                "underline": run.underline,
-                            }
-                            break
+        texto_modificado = texto_completo
 
-                    novo_texto = texto_completo.replace(antigo, novo)
-                    for run in para.runs:
-                        run.text = ""
-                    if para.runs:
-                        para.runs[0].text = novo_texto
-                    texto_completo = novo_texto
-                    total += 1
+        for antigo, novo in substituicoes.items():
+            if antigo in texto_modificado:
+                texto_modificado = texto_modificado.replace(antigo, novo, 1)
+                total += 1
+
+        if texto_modificado != texto_completo:
+            for run in para.runs:
+                run.text = ""
+            if para.runs:
+                para.runs[0].text = texto_modificado
+            else:
+                para.add_run(texto_modificado)
 
         return total
 
